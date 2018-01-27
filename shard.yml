@@ -1,0 +1,9 @@
+name: exuberant-ranker
+version: 0.1.0
+
+authors:
+  - SanteriLahteenkorva <mayhemoid1@gmail.com>
+
+crystal: 0.24.1
+
+license: MIT
