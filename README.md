@@ -1,6 +1,6 @@
 # exuberant-ranker
 
-TODO: Write a description here
+Designed as a tool for making top lists and rankings. A learning project for getting to know Crystal.
 
 ## Installation
 
@@ -18,11 +18,11 @@ dependencies:
 require "exuberant-ranker"
 ```
 
-TODO: Write usage instructions here
+TODO: usage instructions will be added here once the project reaches a state where it is usable.
 
 ## Development
 
-TODO: Write development instructions here
+Made this open source for no particular reason and don't expect this to be ever developed by anyone else.
 
 ## Contributing
 
