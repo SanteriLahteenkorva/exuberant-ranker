@@ -1,9 +1,12 @@
 require "./exuberant-ranker/*"
+require "./lib/*"
 require "option_parser"
-require "file"
 
-# TODO: Write documentation for `Exuberant::Ranker`
-module Exuberant::Ranker
+# TODO: Write better documentation for `ExuberantRanker`
+# The main module of the ranker.
+module ExuberantRanker
+  RankerLib.print_title
+
   rankable_file_path = ""
 
   # Read the command line parameters
@@ -20,25 +23,23 @@ module Exuberant::Ranker
   # Check if the path is valid.
   abort "File not found", 1 if !File.file? rankable_file_path
   puts "Trying to open it"
+  # Fetch the contents
   items = File.read_lines rankable_file_path
+  # Only proceed if some items were received
+  abort "Given file was empty", 1 if items.empty?
 
   # Show the contents.
-  puts "Successfully opened the file. Do you want to see it's contents? (y/n)"
-  # Read characters until y or n is given
-  while true
-    char = STDIN.raw &.read_char
-    c = char
-    if c == 'y'
-      # If the answer is y, print out the contents of the file
-      items.each do |line|
-        puts "\t -#{line}"
-      end
-      break
-    elsif c == 'n'
-      break
+  if RankerLib.ask "Successfully opened the file. Do you want to see it's contents?"
+    # If the answer is yes, print out the contents of the file.
+    items.each do |line|
+      puts "\t -#{line}"
     end
   end
+
   # TODO: Start ranking (create a separate ranker class to handle this)
+  ranker = Ranker.new items
+
+  ranker.start_ranking_dialogue
+
   # TODO: Implement reading settings from an ini file if such exists.
-  # TODO: Print out a title at launch.
 end
