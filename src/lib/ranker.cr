@@ -36,12 +36,28 @@ class Ranker
   end
 
   def rank_ask_all
-    # TODO: implement
-    puts "Asking all still under construction!"
-    i = 1
-    @items.each do |line|
-      puts "\t #{i}.#{line}"
-      i += 1
+    ranks = Hash.zip(@items, Array.new(@items.size, 0))
+    left = (0...@items.size).to_a
+    right = (0...@items.size).to_a
+    left.shuffle
+    left.each do |i|
+      right.shuffle
+      right.each do |j|
+        if i != j
+          # TODO change to <=>, ask each pair just once and shuffle up the order a bit more
+          # => constuct a set of all the pairs to ask first, then iterate over it with questions
+          if RankerLib.ask "Do you prefer #{@items[i]} over #{@items[j]} ?"
+            ranks[@items[i]] += 1
+          else
+            ranks[@items[j]] += 1
+          end
+        end
+      end
+    end
+    puts "I belive the ranking is complete! Here are the results:"
+    @items.sort! { |a, b| ranks[b] <=> ranks[a] }
+    @items.each_with_index do |value, i|
+      puts "\t #{i + 1}. #{value}"
     end
   end
 end
