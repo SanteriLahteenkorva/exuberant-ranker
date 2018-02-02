@@ -4,41 +4,40 @@ enum RankingMode
 end
 
 class RankerSettings
-  DEFAULT_RANKING_MODE  = RankingMode::GUESS
-  DEFAULT_RANKABLE_FILE = ""
+  DEFAULT_SETTINGS  = {"ranking_mode" => RankingMode::GUESS, "rankable_file" => ""}
+  RANKING_MODE_KEYS = {"guess" => RankingMode::GUESS, "ask_all" => RankingMode::ASK_ALL}
 
   def initialize
-    @ranking_mode = DEFAULT_RANKING_MODE
-    @rankable_file = DEFAULT_RANKABLE_FILE
+    @settings = DEFAULT_SETTINGS
   end
 
   def initialize(lines : Array(String))
     initialize
-    @ranking_mode = DEFAULT_RANKING_MODE
-    @rankable_file = DEFAULT_RANKABLE_FILE
     lines.each do |line|
       parts = line.split(" = ")
-      # TODO: Generalise the reading of settings when more are added
-      # (map possible values in file to possible values in program for enums etc. in a hash)
-      case parts[0]
-      # Setting the ranking mode
-      when "ranking_mode"
-        case parts[1]
-        when "guess"
-          @ranking_mode = RankingMode::GUESS
-        when "ask_all"
-          @ranking_mode = RankingMode::ASK_ALL
-        else
-        end
-      when "rankable_file"
-        # If the parameter given is indeed a file, use it.
-        if File.file? parts[1]
-          @rankable_file = parts[1]
-        end
+      # Check if the line is of correct format and if it starts with a proper setting name
+      if parts.size == 2 && DEFAULT_SETTINGS.keys.includes? parts[0]
+        set_setting parts[0], parts[1]
       end
     end
   end
 
-  getter rankable_file : String
-  getter ranking_mode : RankingMode
+  def set_setting(setting : String, value)
+    case setting
+    # Ranking mode is a special case
+    when "ranking_mode"
+      if RANKING_MODE_KEYS.keys.includes? value
+        @settings[setting] = RANKING_MODE_KEYS[value]
+      end
+      # Settings where the value is a file
+    when "rankable_file"
+      if File.file? value
+        @settings[setting] = value
+      end
+    end
+  end
+
+  def get_setting(setting : String)
+    @settings[setting]
+  end
 end

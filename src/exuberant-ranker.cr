@@ -19,7 +19,6 @@ module ExuberantRanker
   end
 
   # Get ranking settings from a file if available
-  puts "Was given settings file #{settings_path}."
   settings = nil
   # Check if the path is valid.
   if settings_path.empty?
@@ -31,14 +30,16 @@ module ExuberantRanker
     settings = RankerSettings.new
     puts "Unable to load settings file, using default settings instead."
   else
+    puts "Was given settings file #{settings_path}."
     # get settings from the file
     settings = RankerSettings.new (File.read_lines settings_path)
     puts "Successfully loaded settings file."
   end
 
   # If the rankable file has not been given, but one is specified by the settings file, use that. If no file has been given either way, abort.
-  if rankable_file_path.empty? && !settings.rankable_file.empty?
-    rankable_file_path = settings.rankable_file
+  srf = settings.get_setting "rankable_file"
+  if rankable_file_path.empty? && srf.is_a? String && !srf.empty?
+    rankable_file_path = srf
   end
   abort "No input file set.", 1 if rankable_file_path.empty?
 
@@ -64,6 +65,4 @@ module ExuberantRanker
   ranker = Ranker.new items, settings
 
   ranker.start_ranking_dialogue
-
-  # TODO: Implement reading settings from an ini file if such exists.
 end

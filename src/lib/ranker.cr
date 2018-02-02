@@ -6,7 +6,7 @@ class Ranker
   end
 
   def start_ranking_dialogue
-    case @settings.ranking_mode
+    case @settings.get_setting "ranking_mode"
     when RankingMode::GUESS
       rank_guess
     when RankingMode::ASK_ALL
