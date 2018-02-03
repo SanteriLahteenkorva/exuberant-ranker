@@ -5,6 +5,8 @@ class Ranker
     @settings = settings
   end
 
+  # TODO make return the ranking list in the end regardless of the mode (store as a field)
+  # Also add method for printing it in lib
   def start_ranking_dialogue
     case @settings.get_setting "ranking_mode"
     when RankingMode::GUESS
@@ -36,28 +38,36 @@ class Ranker
   end
 
   def rank_ask_all
-    ranks = Hash.zip(@items, Array.new(@items.size, 0))
-    left = (0...@items.size).to_a
-    right = (0...@items.size).to_a
-    left.shuffle
-    left.each do |i|
-      right.shuffle
-      right.each do |j|
-        if i != j
-          # TODO change to <=>, ask each pair just once and shuffle up the order a bit more
-          # => constuct a set of all the pairs to ask first, then iterate over it with questions
-          if RankerLib.ask "Do you prefer #{@items[i]} over #{@items[j]} ?"
-            ranks[@items[i]] += 1
-          else
-            ranks[@items[j]] += 1
-          end
-        end
+    k = @items.size
+
+    # Maps each item pair to their corresponding comparison result
+    # That is ranks[{a, b}] = a <=> b
+    keys = (@items.permutations 2).map { |(a, b)| {a, b} }
+    ranks = Hash.zip keys, Array.new keys.size, 0
+
+    # Iterate through all unique item pairs
+    indices = @items.repeated_combinations 2
+
+    # Randomize the order (might turn this to an option later)
+    # TODO Build a custom shuffle which also randomly transforms (a,b)=>(b,a)
+    indices.shuffle!
+
+    indices.each do |(a, b)|
+      if a != b
+        # Tiebreaker will be head to head, so store the result for later checking
+        res = RankerLib.ask_comparison a, b
+        ranks[{a, b}] = res
+        ranks[{b, a}] = -res
       end
     end
-    puts "I belive the ranking is complete! Here are the results:"
-    @items.sort! { |a, b| ranks[b] <=> ranks[a] }
+
+    puts "I believe the ranking is complete! Here are the results:"
+
+    # Sort in descending order by ranks
+    @items.sort! { |a, b| RankerLib.compare_with_tiebreaker ranks, b, a }
+
     @items.each_with_index do |value, i|
-      puts "\t #{i + 1}. #{value}"
+      puts "\t #{i + 1}. #{value}, (#{RankerLib.score ranks, value})"
     end
   end
 end

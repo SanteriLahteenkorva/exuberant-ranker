@@ -1,9 +1,11 @@
+# TODO Swiss + playoff, double elim. with placing and smart ask all.
 enum RankingMode
   GUESS
   ASK_ALL
 end
 
 class RankerSettings
+  # TODO settings to add, ask_all randomized order
   DEFAULT_SETTINGS  = {"ranking_mode" => RankingMode::GUESS, "rankable_file" => ""}
   RANKING_MODE_KEYS = {"guess" => RankingMode::GUESS, "ask_all" => RankingMode::ASK_ALL}
 
