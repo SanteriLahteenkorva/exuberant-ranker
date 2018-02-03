@@ -64,4 +64,16 @@ module RankerLib
     end
     return acc
   end
+
+  def self.shuffle_pairs(pairs)
+    pairs.shuffle!
+    r = Random.new
+    pairs.each do |pair|
+      if r.next_bool
+        tmp = pair[0]
+        pair[0] = pair[1]
+        pair[1] = tmp
+      end
+    end
+  end
 end

@@ -46,11 +46,10 @@ class Ranker
     ranks = Hash.zip keys, Array.new keys.size, 0
 
     # Iterate through all unique item pairs
-    indices = @items.repeated_combinations 2
+    indices = @items.combinations 2
 
     # Randomize the order (might turn this to an option later)
-    # TODO Build a custom shuffle which also randomly transforms (a,b)=>(b,a)
-    indices.shuffle!
+    RankerLib.shuffle_pairs indices
 
     indices.each do |(a, b)|
       if a != b
