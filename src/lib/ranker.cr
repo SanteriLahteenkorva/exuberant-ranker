@@ -5,7 +5,8 @@ class Ranker
     @settings = settings
   end
 
-  # TODO make return the ranking list in the end regardless of the mode (store as a field)
+  # TODO make return the ranking list in the end regardless of the mode (store as a field) NOTE ties should be potentially allowed (hash: item => rank ?,
+  # sort descending by value and print)
   # Also add method for printing it in lib
   def start_ranking_dialogue
     case @settings.get_setting "ranking_mode"
@@ -13,6 +14,8 @@ class Ranker
       rank_guess
     when RankingMode::ASK_ALL
       rank_ask_all
+    when RankingMode::SORT
+      rank_sort
     end
   end
 
@@ -67,6 +70,14 @@ class Ranker
 
     @items.each_with_index do |value, i|
       puts "\t #{i + 1}. #{value}, (#{RankerLib.score ranks, value})"
+    end
+  end
+
+  def rank_sort
+    @items.sort! { |a, b| RankerLib.ask_comparison b, a }
+    puts "The results are in!"
+    @items.each_with_index do |value, i|
+      puts "\t #{i + 1}. #{value}"
     end
   end
 end
