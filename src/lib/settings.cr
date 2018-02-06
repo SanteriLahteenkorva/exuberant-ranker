@@ -3,12 +3,13 @@ enum RankingMode
   GUESS
   ASK_ALL
   SORT
+  SMART_ASK
 end
 
 class RankerSettings
   # TODO settings to add, ask_all randomized order
-  DEFAULT_SETTINGS  = {"ranking_mode" => RankingMode::GUESS, "rankable_file" => ""}
-  RANKING_MODE_KEYS = {"guess" => RankingMode::GUESS, "ask_all" => RankingMode::ASK_ALL, "sort" => RankingMode::SORT}
+  DEFAULT_SETTINGS  = {"ranking_mode" => RankingMode::SORT, "rankable_file" => ""}
+  RANKING_MODE_KEYS = {"guess" => RankingMode::GUESS, "ask_all" => RankingMode::ASK_ALL, "sort" => RankingMode::SORT, "smart_ask" => RankingMode::SMART_ASK}
 
   def initialize
     @settings = DEFAULT_SETTINGS
