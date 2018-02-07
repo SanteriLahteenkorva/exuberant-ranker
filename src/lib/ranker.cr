@@ -5,20 +5,19 @@ class Ranker
     @settings = settings
   end
 
-  # TODO make return the ranking list in the end regardless of the mode (store as a field) NOTE ties should be potentially allowed
-  # Sorted list of tuples {item, rank} <- this!
-  # Also add method for printing it in lib
   def start_ranking_dialogue
+    res = [] of {String, Int32}
     case @settings.get_setting "ranking_mode"
     when RankingMode::GUESS
-      rank_guess
+      res = rank_guess
     when RankingMode::ASK_ALL
-      rank_ask_all
+      res = rank_ask_all
     when RankingMode::SORT
-      rank_sort
+      res = rank_sort
     when RankingMode::SMART_ASK
-      rank_smart_ask
+      res = rank_smart_ask
     end
+    return res
   end
 
   def rank_guess
@@ -27,15 +26,14 @@ class Ranker
 
       if RankerLib.ask "is #{fav} your favorite?"
         puts "Great! Then your ranking is: "
-
-        puts "\t 1.#{fav}"
-
+        result = [] of {String, Int32}
+        result << {fav, 1}
         @items.each do |line|
           if line != fav
-            puts "\t 2.#{line}"
+            result << {line, 2}
           end
         end
-        return
+        return result
       else
         puts "Oh, too bad. Let me try again!"
       end
@@ -68,18 +66,21 @@ class Ranker
 
     # Sort in descending order by ranks
     @items.sort! { |a, b| RankerLib.compare_with_tiebreaker ranks, b, a }
-
+    result = [] of {String, Int32}
     @items.each_with_index do |value, i|
-      puts "\t #{i + 1}. #{value}, (#{RankerLib.score ranks, value})"
+      result << {value, i + 1}
     end
+    return result
   end
 
   def rank_sort
     @items.sort! { |a, b| RankerLib.ask_comparison b, a }
     puts "The results are in!"
+    result = [] of {String, Int32}
     @items.each_with_index do |value, i|
-      puts "\t #{i + 1}. #{value}"
+      result << {value, i + 1}
     end
+    return result
   end
 
   def rank_smart_ask
@@ -102,8 +103,10 @@ class Ranker
     end
     puts "I believe the ranking is complete! Here are the results:"
     @items.sort! { |a, b| RankerLib.compare_with_tiebreaker ranks, b, a }
+    result = [] of {String, Int32}
     @items.each_with_index do |value, i|
-      puts "\t #{i + 1}. #{value}, (#{RankerLib.score ranks, value})"
+      result << {value, i + 1}
     end
+    return result
   end
 end

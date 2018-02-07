@@ -93,7 +93,7 @@ module RankerLib
     end
   end
 
-  def RankerLib.smart_comparison(ranks, a, b)
+  def self.smart_comparison(ranks, a, b)
     a_score = score ranks, a
     b_score = score ranks, b
     a_remaining = remaining ranks, a
@@ -114,5 +114,12 @@ module RankerLib
 
     # If we reach this point, return nil as we probably need to ask the user to determine their preference. Unable to figure it out without asking.
     return nil
+  end
+
+  # Prints the given list of item. rank pairs
+  def self.print_ranking(result)
+    result.each do |(item, rank)|
+      puts "\t #{rank}. #{item}"
+    end
   end
 end

@@ -64,5 +64,5 @@ module ExuberantRanker
   # Start ranking
   ranker = Ranker.new items, settings
 
-  ranker.start_ranking_dialogue
+  RankerLib.print_ranking ranker.start_ranking_dialogue
 end
